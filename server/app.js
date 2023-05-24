@@ -1,37 +1,63 @@
-// load environment variables from .env or elsewhere
-require('dotenv').config();
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
-const path = require('path');
-const cors = require('cors');
-
-//Allow CORS requests
-app.use(cors());
-// logging middleware
-app.use(morgan('dev'));
-// parsing middleware for form input data & json
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
-// serve up static files (e.g. html and css files)
-app.use(express.static(path.join(__dirname, '../dist')));
-
-// api router
-app.use('/api', require('./routes'));
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).send({error: '404 - Not Found', message: 'No route found for the requested URL'});
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+  // database configuration
 });
 
-// error handling middleware
-app.use((error, req, res, next) => {
-  console.error('SERVER ERROR: ', error);
-  if(res.statusCode < 400) res.status(500);
-  res.send({error: error.message, name: error.name, message: error.message, table: error.table});
+const Product = sequelize.define('Product', {
+  name: Sequelize.STRING,
+  description: Sequelize.STRING,
+  category: Sequelize.STRING,
+  price: Sequelize.FLOAT
 });
 
-module.exports = app;
+// Serve the HTML file
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
+// Create a new product
+app.post('/products', async (req, res) => {
+  try {
+    const { name, description, category, price } = req.body;
+    await Product.create({ name, description, category, price });
+    res.sendStatus(201);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.sendStatus(500);
+  }
+});
+
+// Get all products
+app.get('/products', async (req, res) => {
+  try {
+    const products = await Product.findAll();
+    res.json(products);
+  } catch (error) {
+    console.error('Error retrieving products:', error);
+    res.sendStatus(500);
+  }
+});
+
+// Remove a product
+app.delete('/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const affectedRows = await Product.destroy({ where: { id } });
+    if (affectedRows > 0) {
+      res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.error('Error removing product:', error);
+    res.sendStatus(500);
+  }
+});
+
+// Start the server
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
 

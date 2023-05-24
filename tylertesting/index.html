@@ -1,0 +1,27 @@
+
+  
+  <!DOCTYPE html>
+<html>
+<head>
+  <title>Product Inventory</title>
+  <!-- Include any necessary CSS and JavaScript files -->
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  
+  <script src="index.js" type="module"></script>
+
+</head>
+<body>
+  <div class="list">
+    <!-- The fetched product information will be dynamically added here -->
+  </div>
+
+  <!-- Rest of your HTML content, including the form for adding new products -->
+  <form id="addForm">
+    <input type="text" name="productName" placeholder="Product Name" required>
+    <input type="text" name="description" placeholder="Description" required>
+    <input type="text" name="category" placeholder="Category" required>
+    <input type="number" name="price" placeholder="Price" step="0.01" required>
+    <button type="submit">Add Product</button>
+  </form>
+</body>
+</html>
