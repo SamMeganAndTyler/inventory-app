@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./your-sequelize-instance'); // Replace 'your-sequelize-instance' with your actual Sequelize instance
+const sequelize = require('./item.js');
 const Item = require('./item');
 
 describe('Item Model', () => {
@@ -24,7 +24,7 @@ describe('Item Model', () => {
   });
 
   beforeEach(async () => {
-    // Clear the Item table before each test
+    // clear item table
     await Item.destroy({ truncate: true });
   });
 
